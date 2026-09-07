@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "buildCommand": "npm run build",
+  "functions": {
+    "dist/server/api/index.js": {
+      "maxDuration": 30,
+      "memory": 256
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/server/api/index.js"
+    }
+  ]
+}
