@@ -1,12 +1,16 @@
 import { initializeApp, getApps } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
-/**
- * Idempotent Admin SDK init — safe to import this module from multiple
- * functions without double-initializing.
- */
-if (getApps().length === 0) {
-  initializeApp();
+let db: Firestore;
+
+try {
+  if (getApps().length === 0) {
+    initializeApp();
+  }
+  db = getFirestore();
+} catch (err) {
+  console.error("Failed to initialize Firebase:", err);
+  db = null as unknown as Firestore;
 }
 
-export const db = getFirestore();
+export { db };

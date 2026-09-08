@@ -7,6 +7,7 @@ import {
   EXERCISE_HISTORY_SUBCOLLECTION,
   EXERCISE_WEIGHTS_SUBCOLLECTION,
 } from "./collections";
+import type { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
 
 export interface ExerciseWeightData {
   exerciseId: string;
@@ -61,7 +62,7 @@ export async function getRecentWorkoutHistory(
     .orderBy("completedAt", "desc")
     .limit(limit)
     .get();
-  return snap.docs.map((d) => d.data());
+  return snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => d.data());
 }
 
 export async function getRecentExerciseHistory(
@@ -75,7 +76,7 @@ export async function getRecentExerciseHistory(
     .orderBy("completedAt", "desc")
     .limit(limit)
     .get();
-  return snap.docs.map((d) => d.data());
+  return snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => d.data());
 }
 
 export async function getExerciseWeightHistory(

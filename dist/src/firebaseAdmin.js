@@ -48,10 +48,23 @@ function buildApp() {
     if (creds) {
         return (0, app_1.initializeApp)({ credential: (0, app_1.cert)(creds) });
     }
-    // No service account env var — fall back to Application Default
-    // Credentials (works on GCP-hosted environments, fails elsewhere).
-    return (0, app_1.initializeApp)();
+    try {
+        return (0, app_1.initializeApp)();
+    }
+    catch (err) {
+        console.error("Failed to initialize Firebase:", err);
+        throw err;
+    }
 }
-exports.app = buildApp();
-exports.db = (0, firestore_1.getFirestore)(exports.app);
+let app;
+let db;
+try {
+    exports.app = app = buildApp();
+    exports.db = db = (0, firestore_1.getFirestore)(app);
+}
+catch (err) {
+    console.error("Firebase initialization failed:", err);
+    exports.app = app = null;
+    exports.db = db = null;
+}
 //# sourceMappingURL=firebaseAdmin.js.map

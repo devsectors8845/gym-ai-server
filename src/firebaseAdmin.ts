@@ -1,5 +1,5 @@
 import { initializeApp, getApps, cert, type App } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
 /**
  * Initializes the Firebase Admin SDK exactly once per server instance.
@@ -50,10 +50,24 @@ function buildApp(): App {
   if (creds) {
     return initializeApp({ credential: cert(creds) });
   }
-  // No service account env var — fall back to Application Default
-  // Credentials (works on GCP-hosted environments, fails elsewhere).
-  return initializeApp();
+  try {
+    return initializeApp();
+  } catch (err) {
+    console.error("Failed to initialize Firebase:", err);
+    throw err;
+  }
 }
 
-export const app = buildApp();
-export const db = getFirestore(app);
+let app: App;
+let db: Firestore;
+
+try {
+  app = buildApp();
+  db = getFirestore(app);
+} catch (err) {
+  console.error("Firebase initialization failed:", err);
+  app = null as unknown as App;
+  db = null as unknown as Firestore;
+}
+
+export { app, db };

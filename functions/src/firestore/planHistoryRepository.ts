@@ -3,6 +3,7 @@ import {
   USER_HISTORY_ROOT_COLLECTION,
 } from "./collections";
 import { PlanVersion, WeekAnalysis } from "../types/history";
+import type { QueryDocumentSnapshot, DocumentData } from "firebase-admin/firestore";
 
 const PLAN_HISTORY_SUBCOLLECTION = "planHistory";
 const WEEK_ANALYSIS_SUBCOLLECTION = "weekAnalysis";
@@ -54,7 +55,7 @@ export async function getPlanVersionsForWeek(uid: string, weekNumber: number): P
     .where("weekNumber", "==", weekNumber)
     .get();
 
-  return snap.docs.map((d) => d.data() as PlanVersion);
+  return snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => d.data() as PlanVersion);
 }
 
 export async function listPlanVersions(uid: string, limit = 20): Promise<PlanVersion[]> {
@@ -66,7 +67,7 @@ export async function listPlanVersions(uid: string, limit = 20): Promise<PlanVer
     .limit(limit)
     .get();
 
-  return snap.docs.map((d) => d.data() as PlanVersion);
+  return snap.docs.map((d: QueryDocumentSnapshot<DocumentData>) => d.data() as PlanVersion);
 }
 
 export async function archivePlanVersion(uid: string, planId: string): Promise<void> {
