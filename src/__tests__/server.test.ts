@@ -2,14 +2,14 @@ import request from "supertest";
 import type { Express } from "express";
 
 // Mock firebase-admin before any server code loads.
-jest.mock("../../../functions/src/firestore/admin", () => ({
+jest.mock("../../functions/src/firestore/admin", () => ({
   db: {
     collection: jest.fn(),
   },
 }));
 
 // Mock the user repository so handlers can run without a real Firestore.
-jest.mock("../../../functions/src/firestore/userRepository", () => ({
+jest.mock("../../functions/src/firestore/userRepository", () => ({
   getUserProfile: jest.fn(),
   getCurrentWorkoutPlan: jest.fn(),
   getRecentWorkoutHistory: jest.fn(),
@@ -17,11 +17,11 @@ jest.mock("../../../functions/src/firestore/userRepository", () => ({
   getExerciseWeightHistory: jest.fn(),
 }));
 
-jest.mock("../../../functions/src/firestore/workoutRepository", () => ({
+jest.mock("../../functions/src/firestore/workoutRepository", () => ({
   saveGeneratedPlan: jest.fn(),
 }));
 
-jest.mock("../../../functions/src/firestore/planHistoryRepository", () => ({
+jest.mock("../../functions/src/firestore/planHistoryRepository", () => ({
   archivePlanVersion: jest.fn(),
   savePlanVersion: jest.fn(),
   getPlanVersion: jest.fn(),
@@ -34,11 +34,11 @@ jest.mock("../../../functions/src/firestore/planHistoryRepository", () => ({
   getLatestWeekAnalysis: jest.fn(),
 }));
 
-jest.mock("../../../functions/src/services/weekAnalysisService", () => ({
+jest.mock("../../functions/src/services/weekAnalysisService", () => ({
   analyzeWorkoutWeek: jest.fn(),
 }));
 
-jest.mock("../../../functions/src/services/progressionService", () => ({
+jest.mock("../../functions/src/services/progressionService", () => ({
   calculateProgression: jest.fn(),
   applyProgressionAdjustments: jest.fn((plan: unknown) => plan),
 }));
@@ -72,8 +72,8 @@ const VALID_PROFILE = {
   fullName: "Test User",
 };
 
-const { getUserProfile } = require("../../../functions/src/firestore/userRepository");
-const { saveGeneratedPlan } = require("../../../functions/src/firestore/workoutRepository");
+const { getUserProfile } = require("../../functions/src/firestore/userRepository");
+const { saveGeneratedPlan } = require("../../functions/src/firestore/workoutRepository");
 
 describe("gymai-server — Express app", () => {
   let app: Express;

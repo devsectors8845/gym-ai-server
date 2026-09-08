@@ -1,5 +1,5 @@
 import type { Request } from "express";
-import { HttpError } from "../../../functions/src/utils/errors";
+import { HttpError } from "../../functions/src/utils/errors";
 import type { AuthenticatedRequest } from "./auth";
 import type { CallableRequest } from "firebase-functions/v2/https";
 

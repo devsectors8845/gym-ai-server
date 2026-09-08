@@ -3,7 +3,7 @@ import { generateWorkoutPlanRouter } from "./routes/generateWorkoutPlan";
 import { validateWorkoutPlanRouter } from "./routes/validateWorkoutPlan";
 import { checkWeeklyPlanRouter } from "./routes/checkWeeklyPlan";
 import { errorHandler } from "./middleware/errorHandler";
-import { HttpError } from "../../functions/src/utils/errors";
+import { HttpError } from "../functions/src/utils/errors";
 import "./firebaseAdmin"; // Initialize Firebase Admin SDK on first import
 
 /**

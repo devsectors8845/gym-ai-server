@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { generateWorkoutPlanHandler } from "../../../functions/src/functions/generateWorkoutPlan";
+import { generateWorkoutPlanHandler } from "../../functions/src/functions/generateWorkoutPlan";
 import { requireFirebaseAuth } from "../middleware/auth";
 import { adaptHandler } from "../middleware/adapter";
 

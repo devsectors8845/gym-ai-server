@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validateWorkoutPlanHandler } from "../../../functions/src/functions/validateWorkoutPlan";
+import { validateWorkoutPlanHandler } from "../../functions/src/functions/validateWorkoutPlan";
 import { requireFirebaseAuth } from "../middleware/auth";
 import { adaptHandler } from "../middleware/adapter";
 

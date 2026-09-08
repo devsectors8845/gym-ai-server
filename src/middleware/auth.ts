@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { getAuth } from "firebase-admin/auth";
-import { HttpError } from "../../../functions/src/utils/errors";
+import { HttpError } from "../../functions/src/utils/errors";
 
 /**
  * Express middleware: extracts the Firebase ID token from the

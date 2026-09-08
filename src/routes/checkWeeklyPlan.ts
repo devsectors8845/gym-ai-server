@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkWeeklyPlanHandler } from "../../../functions/src/functions/generateNextWeekPlan";
+import { checkWeeklyPlanHandler } from "../../functions/src/functions/generateNextWeekPlan";
 import { requireFirebaseAuth } from "../middleware/auth";
 import { adaptHandler } from "../middleware/adapter";
 

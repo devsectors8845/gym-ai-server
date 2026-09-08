@@ -1,4 +1,4 @@
-import { HttpError } from "../../../functions/src/utils/errors";
+import { HttpError } from "../../functions/src/utils/errors";
 import { requireFirebaseAuth, type AuthenticatedRequest } from "../middleware/auth";
 
 describe("gymai-server — auth middleware (unit)", () => {

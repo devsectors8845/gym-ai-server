@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { HttpError, toWorkoutHttpError } from "../../../functions/src/utils/workoutErrors";
+import { HttpError, toWorkoutHttpError } from "../../functions/src/utils/workoutErrors";
 import { logger } from "firebase-functions/v2";
 
 /**
