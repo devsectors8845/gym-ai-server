@@ -16,7 +16,7 @@ import { HttpError } from "../../functions/src/utils/errors";
  * underlying workout-engine handlers can be reused without modification.
  */
 export interface AuthenticatedRequest extends Request {
-  auth?: { uid: string };
+  auth?: { uid: string; authTime?: number };
 }
 
 export async function requireFirebaseAuth(
@@ -38,7 +38,7 @@ export async function requireFirebaseAuth(
 
   try {
     const decoded = await getAuth().verifyIdToken(idToken);
-    req.auth = { uid: decoded.uid };
+    req.auth = { uid: decoded.uid, authTime: decoded.auth_time };
     return next();
   } catch (err) {
     // Don't forward the underlying verifier error message — it can leak

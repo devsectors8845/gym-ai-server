@@ -1,3 +1,4 @@
+import { deleteAccountRouter } from "./routes/deleteAccount";
 import express, { type Express, type Request, type Response } from "express";
 import { generateWorkoutPlanRouter } from "./routes/generateWorkoutPlan";
 import { validateWorkoutPlanRouter } from "./routes/validateWorkoutPlan";
@@ -33,6 +34,8 @@ export function createApp(): Express {
   app.use("/api/generateWorkoutPlan", generateWorkoutPlanRouter);
   app.use("/api/validateWorkoutPlan", validateWorkoutPlanRouter);
   app.use("/api/checkWeeklyPlan", checkWeeklyPlanRouter);
+
+  app.use("/api/deleteAccount", deleteAccountRouter);
 
   // 404 for unknown routes. We keep this generic so unauthenticated users
   // probing for `/api/chatWithCoach` don't get a more informative error
