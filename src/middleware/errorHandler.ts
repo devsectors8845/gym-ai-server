@@ -22,7 +22,10 @@ export function errorHandler(
 ): void {
   // toWorkoutHttpError returns either a HttpError (when the input was
   // already a WorkoutEngineError or HttpError) or a generic fallback.
-  const mapped = toWorkoutHttpError(err);
+  const bodyError = err as { type?: string } | null;
+  const mapped = bodyError?.type === "entity.parse.failed" || bodyError?.type === "entity.too.large"
+    ? new HttpError("invalid-argument", "Invalid JSON request body.")
+    : toWorkoutHttpError(err);
   // mapped is always an HttpError — but the type union lets it also be
   // `unknown` in some branches, so we narrow defensively.
   const httpErr: HttpError =

@@ -1,7 +1,4 @@
-// V1 `functions.https.onCall` is used (not V2 `onCall`) so this function
-// deploys and runs on the Firebase Spark (free) plan. V2 callables require
-// Blaze. See `functions/generateWorkoutPlan.ts` for the same V1 pattern.
-import * as functions from "firebase-functions";
+import { HttpError } from "../utils/errors";
 import { logger } from "firebase-functions/v2";
 import { type CallableRequest } from "firebase-functions/v2/https";
 import { getUserProfile } from "../firestore/userRepository";
@@ -57,13 +54,13 @@ export async function validateWorkoutPlanHandler(
   request: CallableRequest<ValidateWorkoutPlanRequest>
 ): Promise<ValidateWorkoutPlanResponse> {
   if (!request.auth?.uid) {
-    throw new functions.https.HttpsError("unauthenticated", "You must be signed in to validate a workout plan.");
+    throw new HttpError("unauthenticated", "You must be signed in to validate a workout plan.");
   }
   const uid = request.auth.uid;
 
   const data = request.data;
   if (!data || typeof data !== "object" || !data.dailyWorkouts || typeof data.dailyWorkouts !== "object") {
-    throw new functions.https.HttpsError("invalid-argument", "A dailyWorkouts object is required.");
+    throw new HttpError("invalid-argument", "A dailyWorkouts object is required.");
   }
   const dailyWorkouts = data.dailyWorkouts as Record<string, DraftExercise[]>;
 
@@ -142,8 +139,3 @@ export async function validateWorkoutPlanHandler(
   logger.info("validateWorkoutPlan.checked", { fn: FUNCTION_NAME, uid, valid, errorCount: errors.length });
   return { valid, errors, warnings };
 }
-
-export const validateWorkoutPlan = functions.https.onCall(
-  { timeoutSeconds: 15 },
-  validateWorkoutPlanHandler
-);

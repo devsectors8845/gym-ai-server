@@ -1,4 +1,5 @@
-import { HttpsError, type CallableRequest } from "firebase-functions/v2/https";
+import type { CallableRequest } from "firebase-functions/v2/https";
+import { HttpError as HttpsError } from "../utils/errors";
 
 jest.mock("../firestore/userRepository", () => ({
   getUserProfile: jest.fn(),

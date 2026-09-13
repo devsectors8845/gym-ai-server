@@ -1,4 +1,4 @@
-import * as functions from "firebase-functions";
+import { HttpError } from "../utils/errors";
 import { logger } from "firebase-functions/v2";
 import { CallableRequest } from "firebase-functions/v2/https";
 import { generateNextWeekPlanService, checkWeekEligibility, NextWeekGenerationError } from "../services/nextWeekGenerationService";
@@ -20,7 +20,7 @@ export async function checkWeeklyPlanHandler(
   request: CallableRequest<unknown>
 ): Promise<CheckWeeklyPlanResponse> {
   if (!request.auth?.uid) {
-    throw new functions.https.HttpsError("unauthenticated", "You must be signed in.");
+    throw new HttpError("unauthenticated", "You must be signed in.");
   }
   const uid = request.auth.uid;
 
@@ -87,19 +87,12 @@ export async function checkWeeklyPlanHandler(
         "unexpected": "failed-precondition",
       };
       const code = codeMap[err.category] || "failed-precondition";
-      throw new functions.https.HttpsError(code, err.message);
+      throw new HttpError(code, err.message);
     }
     logger.error("workoutPlan.check_weekly_plan_error", { fn: "checkWeeklyPlan", uid, message: err instanceof Error ? err.message : String(err) });
-    throw new functions.https.HttpsError("failed-precondition", "Failed to check weekly plan.");
+    throw new HttpError("failed-precondition", "Failed to check weekly plan.");
   }
 }
 
-export const checkWeeklyPlan = functions.https.onCall(
-  {
-    timeoutSeconds: 60,
-    memory: "256MiB",
-  },
-  checkWeeklyPlanHandler
-);
 
 export { generateNextWeekPlanService, checkWeekEligibility, NextWeekGenerationError };

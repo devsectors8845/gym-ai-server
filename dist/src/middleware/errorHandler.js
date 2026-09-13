@@ -18,7 +18,10 @@ const v2_1 = require("firebase-functions/v2");
 function errorHandler(err, req, res, _next) {
     // toWorkoutHttpError returns either a HttpError (when the input was
     // already a WorkoutEngineError or HttpError) or a generic fallback.
-    const mapped = (0, workoutErrors_1.toWorkoutHttpError)(err);
+    const bodyError = err;
+    const mapped = bodyError?.type === "entity.parse.failed" || bodyError?.type === "entity.too.large"
+        ? new workoutErrors_1.HttpError("invalid-argument", "Invalid JSON request body.")
+        : (0, workoutErrors_1.toWorkoutHttpError)(err);
     // mapped is always an HttpError — but the type union lets it also be
     // `unknown` in some branches, so we narrow defensively.
     const httpErr = mapped instanceof workoutErrors_1.HttpError ? mapped : new workoutErrors_1.HttpError("internal", "Unexpected error.");

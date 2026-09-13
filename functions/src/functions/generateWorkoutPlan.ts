@@ -1,9 +1,4 @@
-// V1 `functions.https.onCall` is used (not V2 `onCall`) so this function
-// deploys and runs on the Firebase Spark (free) plan. V2 callables require
-// Blaze. The behavior is identical: same auth context, same request shape,
-// same HttpsError semantics. See `functions/generateNextWeekPlan.ts` for
-// the same V1 pattern in `checkWeeklyPlan`.
-import * as functions from "firebase-functions";
+import { HttpError } from "../utils/errors";
 import { logger } from "firebase-functions/v2";
 import { type CallableRequest } from "firebase-functions/v2/https";
 import { getUserProfile } from "../firestore/userRepository";
@@ -46,7 +41,7 @@ export async function generateWorkoutPlanHandler(
 ): Promise<GenerateWorkoutPlanResponse> {
   const startedAt = Date.now();
   if (!request.auth?.uid) {
-    throw new functions.https.HttpsError("unauthenticated", "You must be signed in to generate a workout plan.");
+    throw new HttpError("unauthenticated", "You must be signed in to generate a workout plan.");
   }
   const uid = request.auth.uid;
   logger.info("workoutPlan.request_start", { fn: FUNCTION_NAME, uid });
@@ -84,15 +79,10 @@ export async function generateWorkoutPlanHandler(
       errorCategory: category,
       durationMs: Date.now() - startedAt,
     });
-    if (!(err instanceof WorkoutEngineError) && !(err instanceof functions.https.HttpsError)) {
+    if (!(err instanceof WorkoutEngineError) && !(err instanceof HttpError)) {
       const message = err instanceof Error ? err.message : String(err);
       logger.error("workoutPlan.unexpected_error", { fn: FUNCTION_NAME, uid, message });
     }
     throw toWorkoutHttpError(err);
   }
 }
-
-export const generateWorkoutPlan = functions.https.onCall(
-  { timeoutSeconds: 30 },
-  generateWorkoutPlanHandler
-);

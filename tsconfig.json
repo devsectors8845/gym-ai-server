@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "commonjs",
-    "lib": ["ES2020"],
+    "lib": [
+      "ES2020"
+    ],
     "outDir": "dist",
     "rootDir": ".",
     "strict": true,
@@ -17,8 +19,12 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@gymai/functions": ["./functions/src"],
-      "@gymai/functions/*": ["./functions/src/*"]
+      "@gymai/functions": [
+        "./functions/src"
+      ],
+      "@gymai/functions/*": [
+        "./functions/src/*"
+      ]
     }
   },
   "include": [
@@ -51,13 +57,10 @@
     "dist",
     "src/__tests__",
     "functions/src/__tests__",
-    "functions/lib",
-    "functions/node_modules",
     "functions/src/services/aiService.ts",
     "functions/src/services/groqService.ts",
     "functions/src/services/openAIService.ts",
     "functions/src/functions/chatWithCoach.ts",
-    "functions/src/index.ts",
     "functions/src/utils/validation.ts",
     "functions/src/utils/logging.ts"
   ]

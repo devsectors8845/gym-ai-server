@@ -19,9 +19,7 @@ import "./firebaseAdmin"; // Initialize Firebase Admin SDK on first import
 export function createApp(): Express {
   const app = express();
 
-  // JSON body parser. Cloud Functions' onCall wrapped the body in
-  // `{ data: ... }`; our adapter expects the raw `data` shape, so the
-  // client sends `{ data: { ... } }` and we unwrap it here.
+  // Accept raw JSON payloads; the adapter wraps successful responses in { data }.
   app.use(express.json({ limit: "1mb" }));
 
   // Liveness probe — useful for Vercel + uptime monitors. Does not touch

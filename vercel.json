@@ -3,15 +3,14 @@
   "version": 2,
   "buildCommand": "npm run build",
   "functions": {
-    "dist/api/index.js": {
-      "maxDuration": 30,
-      "memory": 256
+    "api/index.ts": {
+      "maxDuration": 60
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "dist/api/index.js"
+      "source": "/(.*)",
+      "destination": "/api/index"
     }
   ]
 }

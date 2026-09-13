@@ -1,46 +1,7 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateWorkoutPlan = void 0;
 exports.generateWorkoutPlanHandler = generateWorkoutPlanHandler;
-// V1 `functions.https.onCall` is used (not V2 `onCall`) so this function
-// deploys and runs on the Firebase Spark (free) plan. V2 callables require
-// Blaze. The behavior is identical: same auth context, same request shape,
-// same HttpsError semantics. See `functions/generateNextWeekPlan.ts` for
-// the same V1 pattern in `checkWeeklyPlan`.
-const functions = __importStar(require("firebase-functions"));
+const errors_1 = require("../utils/errors");
 const v2_1 = require("firebase-functions/v2");
 const userRepository_1 = require("../firestore/userRepository");
 const workoutRepository_1 = require("../firestore/workoutRepository");
@@ -71,7 +32,7 @@ const FUNCTION_NAME = "generateWorkoutPlan";
 async function generateWorkoutPlanHandler(request) {
     const startedAt = Date.now();
     if (!request.auth?.uid) {
-        throw new functions.https.HttpsError("unauthenticated", "You must be signed in to generate a workout plan.");
+        throw new errors_1.HttpError("unauthenticated", "You must be signed in to generate a workout plan.");
     }
     const uid = request.auth.uid;
     v2_1.logger.info("workoutPlan.request_start", { fn: FUNCTION_NAME, uid });
@@ -101,12 +62,11 @@ async function generateWorkoutPlanHandler(request) {
             errorCategory: category,
             durationMs: Date.now() - startedAt,
         });
-        if (!(err instanceof workoutErrors_1.WorkoutEngineError) && !(err instanceof functions.https.HttpsError)) {
+        if (!(err instanceof workoutErrors_1.WorkoutEngineError) && !(err instanceof errors_1.HttpError)) {
             const message = err instanceof Error ? err.message : String(err);
             v2_1.logger.error("workoutPlan.unexpected_error", { fn: FUNCTION_NAME, uid, message });
         }
         throw (0, workoutErrors_1.toWorkoutHttpError)(err);
     }
 }
-exports.generateWorkoutPlan = functions.https.onCall({ timeoutSeconds: 30 }, generateWorkoutPlanHandler);
 //# sourceMappingURL=generateWorkoutPlan.js.map

@@ -146,3 +146,37 @@ describe("gymai-server — Express app", () => {
     });
   });
 });
+
+describe('workout HTTP error contracts', () => {
+  it('returns 400 for missing manual workout data', async () => {
+    const res = await request(createApp()).post('/api/validateWorkoutPlan').send({});
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('invalid-argument');
+  });
+  it('validates a manual draft using the raw body', async () => {
+    getUserProfile.mockResolvedValue(VALID_PROFILE);
+    const res = await request(createApp()).post('/api/validateWorkoutPlan').send({ dailyWorkouts: { Monday: [{ name: 'Push-Up' }] } });
+    expect(res.status).toBe(200);
+    expect(res.body.data.valid).toBe(true);
+  });
+  it('returns not_ready when the user has no plan', async () => {
+    const { getCurrentWorkoutPlan } = require('../../functions/src/firestore/userRepository');
+    getCurrentWorkoutPlan.mockResolvedValue(null);
+    const res = await request(createApp()).post('/api/checkWeeklyPlan').send({});
+    expect(res.status).toBe(200);
+    expect(res.body.data.action).toBe('not_ready');
+  });
+  it('preserves weekly precondition errors', async () => {
+    const { getCurrentWorkoutPlan } = require('../../functions/src/firestore/userRepository');
+    getCurrentWorkoutPlan.mockRejectedValue(new Error('private database detail'));
+    const res = await request(createApp()).post('/api/checkWeeklyPlan').send({});
+    expect(res.status).toBe(412);
+    expect(res.body.error.code).toBe('failed-precondition');
+    expect(JSON.stringify(res.body)).not.toContain('private database detail');
+  });
+  it('returns a JSON client error for malformed JSON', async () => {
+    const res = await request(createApp()).post('/api/generateWorkoutPlan').set('Content-Type', 'application/json').send('{');
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe('invalid-argument');
+  });
+});

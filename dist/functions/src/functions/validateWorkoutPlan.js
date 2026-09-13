@@ -1,44 +1,7 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateWorkoutPlan = void 0;
 exports.validateWorkoutPlanHandler = validateWorkoutPlanHandler;
-// V1 `functions.https.onCall` is used (not V2 `onCall`) so this function
-// deploys and runs on the Firebase Spark (free) plan. V2 callables require
-// Blaze. See `functions/generateWorkoutPlan.ts` for the same V1 pattern.
-const functions = __importStar(require("firebase-functions"));
+const errors_1 = require("../utils/errors");
 const v2_1 = require("firebase-functions/v2");
 const userRepository_1 = require("../firestore/userRepository");
 const equipment_1 = require("../constants/equipment");
@@ -52,12 +15,12 @@ function findCatalogMatchByName(name) {
 }
 async function validateWorkoutPlanHandler(request) {
     if (!request.auth?.uid) {
-        throw new functions.https.HttpsError("unauthenticated", "You must be signed in to validate a workout plan.");
+        throw new errors_1.HttpError("unauthenticated", "You must be signed in to validate a workout plan.");
     }
     const uid = request.auth.uid;
     const data = request.data;
     if (!data || typeof data !== "object" || !data.dailyWorkouts || typeof data.dailyWorkouts !== "object") {
-        throw new functions.https.HttpsError("invalid-argument", "A dailyWorkouts object is required.");
+        throw new errors_1.HttpError("invalid-argument", "A dailyWorkouts object is required.");
     }
     const dailyWorkouts = data.dailyWorkouts;
     const errors = [];
@@ -125,5 +88,4 @@ async function validateWorkoutPlanHandler(request) {
     v2_1.logger.info("validateWorkoutPlan.checked", { fn: FUNCTION_NAME, uid, valid, errorCount: errors.length });
     return { valid, errors, warnings };
 }
-exports.validateWorkoutPlan = functions.https.onCall({ timeoutSeconds: 15 }, validateWorkoutPlanHandler);
 //# sourceMappingURL=validateWorkoutPlan.js.map
