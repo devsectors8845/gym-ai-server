@@ -13,5 +13,6 @@
       "source": "/(.*)",
       "destination": "/api/index"
     }
-  ]
+  ],
+  "installCommand": "npm ci"
 }
