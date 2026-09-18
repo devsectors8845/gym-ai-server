@@ -14,7 +14,7 @@ async function requireFirebaseAuth(req, _res, next) {
     }
     try {
         const decoded = await (0, auth_1.getAuth)().verifyIdToken(idToken);
-        req.auth = { uid: decoded.uid };
+        req.auth = { uid: decoded.uid, authTime: decoded.auth_time };
         return next();
     }
     catch (err) {

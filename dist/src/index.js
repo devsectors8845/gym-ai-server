@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createApp = createApp;
+const deleteAccount_1 = require("./routes/deleteAccount");
 const express_1 = __importDefault(require("express"));
 const generateWorkoutPlan_1 = require("./routes/generateWorkoutPlan");
 const validateWorkoutPlan_1 = require("./routes/validateWorkoutPlan");
@@ -35,6 +36,7 @@ function createApp() {
     app.use("/api/generateWorkoutPlan", generateWorkoutPlan_1.generateWorkoutPlanRouter);
     app.use("/api/validateWorkoutPlan", validateWorkoutPlan_1.validateWorkoutPlanRouter);
     app.use("/api/checkWeeklyPlan", checkWeeklyPlan_1.checkWeeklyPlanRouter);
+    app.use("/api/deleteAccount", deleteAccount_1.deleteAccountRouter);
     // 404 for unknown routes. We keep this generic so unauthenticated users
     // probing for `/api/chatWithCoach` don't get a more informative error
     // than any other 404.
