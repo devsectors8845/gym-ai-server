@@ -74,6 +74,7 @@ export function calculateProgression(
         return;
       }
 
+      if (exercise.reps === "timed" || exercise.id === "plank_bodyweight") return;
       if (exAnalysis.progressionRecommendation === "increase_weight") {
         const newWeight = Math.max(MIN_WEIGHT, exAnalysis.avgWeight + WEIGHT_INCREMENT);
 
@@ -228,7 +229,7 @@ function resolveSubstitute(
       bodyPart: candidate.bodyPart,
       equipment: candidate.equipment,
       sets: strategy.sets[profile.experience],
-      reps: min === max ? `${min}` : `${min}-${max}`,
+      reps: candidate.id === "plank_bodyweight" ? "timed" : min === max ? `${min}` : `${min}-${max}`,
       restSeconds: strategy.restSeconds,
     };
   } catch {
@@ -258,7 +259,7 @@ function findSubstitute(
       bodyPart: candidate.bodyPart,
       equipment: candidate.equipment,
       sets: strategy.sets[profile.experience],
-      reps: min === max ? `${min}` : `${min}-${max}`,
+      reps: candidate.id === "plank_bodyweight" ? "timed" : min === max ? `${min}` : `${min}-${max}`,
       restSeconds: strategy.restSeconds,
     };
   } catch {

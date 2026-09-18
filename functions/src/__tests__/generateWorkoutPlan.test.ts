@@ -108,12 +108,11 @@ describe("generateWorkoutPlanHandler — success path", () => {
   });
 
   it("never saves a plan that failed validation (Generate -> Validate -> Save, never Generate -> Save)", async () => {
-    // A knee limitation + bodyweight-only equipment leaves the "arms" body
-    // part with zero eligible exercises in the catalog, which should
-    // surface as a controlled empty_pool rejection well before any save.
+    // Bodyweight chest exercises are unavailable for a wrist limitation.
     mockedGetUserProfile.mockResolvedValueOnce({
       ...VALID_PROFILE,
       availableEquipment: ["Nothing"],
+      modifications: "wrist pain",
     });
     await expect(generateWorkoutPlanHandler(fakeRequest())).rejects.toMatchObject({
       code: "failed-precondition",

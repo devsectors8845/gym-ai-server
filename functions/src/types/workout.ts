@@ -124,6 +124,9 @@ export interface PlanExercise {
   bodyPart: BodyPart;
   equipment: Equipment;
   sets: number;
+  instructions?: string[];
+  formCues?: string[];
+  target?: string;
   reps: string; // e.g. "8-12"
   restSeconds: number;
   weight?: number;

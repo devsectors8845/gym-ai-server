@@ -128,10 +128,13 @@ export function toPlanExercise(
   return {
     id: exercise.id,
     name: exercise.name,
+    instructions: exercise.instructions,
+    formCues: exercise.formCues,
+    target: exercise.muscle,
     bodyPart: exercise.bodyPart,
     equipment: exercise.equipment,
     sets: strategy.sets[experience],
-    reps: min === max ? `${min}` : `${min}-${max}`,
+    reps: exercise.id === "plank_bodyweight" ? "timed" : min === max ? `${min}` : `${min}-${max}`,
     restSeconds: strategy.restSeconds,
   };
 }
