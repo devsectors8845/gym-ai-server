@@ -2,7 +2,7 @@ import { randomUUID } from "crypto";
 import { BodyPart, GeneratedPlan, NormalizedProfile, PlanExercise } from "../types/workout";
 import { getGoalStrategy } from "../constants/goals";
 import { buildWeeklySplit } from "./templateService";
-import { selectExercisesForBodyPart } from "./exerciseSelectionService";
+import { buildSafePool, selectExercisesForBodyPart } from "./exerciseSelectionService";
 import { hashStringToSeed, mulberry32 } from "../utils/seededRandom";
 
 export const PLAN_SCHEMA_VERSION = 1;
@@ -100,7 +100,15 @@ function buildNutrition(profile: NormalizedProfile) {
  */
 export function buildPlan(uid: string, profile: NormalizedProfile, now: Date = new Date(), weekNumber = 1, previousPlanId: string | null = null): GeneratedPlan {
   const strategy = getGoalStrategy(profile.goal);
-  const split = buildWeeklySplit(profile.goal, profile.frequencyDays);
+  const bodyweightOnly = profile.equipment.length === 1 && profile.equipment[0] === "bodyweight";
+  const split = buildWeeklySplit(profile.goal, profile.frequencyDays).map(day => {
+    // The catalog has no bodyweight shoulder/arm isolation movements.
+    // Use a full-body template rather than requiring unavailable gym slots.
+    if (bodyweightOnly && day.dayLabel !== "Rest" && day.dayLabel !== "Cardio") {
+      return { dayLabel: "Full Body", bodyParts: ["chest", "back", "legs", "core"] as BodyPart[] };
+    }
+    return day;
+  });
   const seed = hashStringToSeed(buildSeedKey(uid, profile, now));
   const rng = mulberry32(seed);
   const usedIds = new Set<string>();
@@ -123,7 +131,11 @@ export function buildPlan(uid: string, profile: NormalizedProfile, now: Date = n
 
     const exercises: PlanExercise[] = [];
     day.bodyParts.forEach((bodyPart) => {
-      const count = EXERCISES_PER_BODY_PART[bodyPart];
+      // Do not repeat a small bodyweight pool merely to fill gym-sized quotas.
+      // A zero pool still reaches the selector and retains its rejection.
+      const count = bodyweightOnly
+        ? Math.min(EXERCISES_PER_BODY_PART[bodyPart], buildSafePool(bodyPart, profile, strategy).length)
+        : EXERCISES_PER_BODY_PART[bodyPart];
       exercises.push(...selectExercisesForBodyPart(bodyPart, count, profile, strategy, rng, usedIds));
     });
     dailyWorkouts[dayKey] = exercises;
